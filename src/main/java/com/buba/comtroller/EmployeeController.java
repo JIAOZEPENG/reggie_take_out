@@ -47,6 +47,12 @@ public class EmployeeController {
         if (!emp.getPassword().equals(password)){
             return R.error("密码错误");
         }
+
+        //该账户是否被冻结
+        if (!emp.getStatus().equals(1)){
+            return R.error("该账户已被封禁");
+        }
+
         //密码正确将用户id存入Session
         request.setAttribute("employee",emp.getId());
         return R.success(emp);
