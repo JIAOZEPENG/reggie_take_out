@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.buba.pojo.Employee;
 import com.buba.utils.R;
 import com.buba.service.impl.EmployeeServiceImpl;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/employee")
@@ -17,6 +20,8 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeServiceImpl employeeService;
+
+    private Logger log = Logger.getLogger(EmployeeController.class);
 
     //登录
     @PostMapping ("/login")
@@ -51,5 +56,41 @@ public class EmployeeController {
         //清楚session中的用户信息
         request.getSession().removeAttribute("employee");
         return R.success("退出成功");
+    }
+
+    //添加
+    @PostMapping
+    private R<String> save(HttpServletRequest request,@RequestBody Employee employee){
+        log.info("新增员工，员工信息：{}"+employee.toString());
+
+        //加密密码
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+
+        //获取登录者id
+        Long empId = (Long) request.getSession().getAttribute("employee");
+        employee.setCreateUser(1l);
+        employee.setUpdateUser(1l);
+
+        //设置id
+
+        employee.setId(1l);
+        UUID uuid = UUID.randomUUID();
+        long mostSigBits = uuid.getMostSignificantBits();
+        long leastSigBits = uuid.getLeastSignificantBits();
+        System.out.println(mostSigBits ^ leastSigBits);
+        employee.setId(mostSigBits ^ leastSigBits);
+        try {
+            employeeService.save(employee);
+            return R.success("添加成功");
+        } catch (Exception e) {
+            System.out.println(e);
+            log.error(e);
+            return R.error("添加失败，");
+        }
+
+
     }
 }
