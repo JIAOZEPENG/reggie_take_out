@@ -17,7 +17,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    //新增菜品分类
+    //新增菜品类型
     @PostMapping
     public R<String> save(@RequestBody Category category){
         log.info("category:{}",category);
@@ -26,7 +26,7 @@ public class CategoryController {
     }
 
     /**
-     * 菜品分页查询
+     * 菜品类型分页查询
      * @param page 页数
      * @param pageSize  每页个数
      */
@@ -41,5 +41,16 @@ public class CategoryController {
         //分页查询
         categoryService.page(pageInFo, queryWrapper);
         return R.success(pageInFo);
+    }
+
+    /**
+     * 删除菜品分类
+     */
+    @DeleteMapping
+    public R<String> delete(Long ids){
+        log.info("删除分类，id为{}",ids);
+        categoryService.removeById(ids);
+        //代码完善之后categoryService.remove(ids);
+        return R.success("菜品分类信息删除成功");
     }
 }
