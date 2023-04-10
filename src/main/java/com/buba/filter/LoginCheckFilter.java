@@ -1,6 +1,10 @@
 package com.buba.filter;
 
 import com.alibaba.fastjson.JSONObject;
+import com.buba.comtroller.EmployeeController;
+import com.buba.utils.BaseContext;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.log4j.Logger;
 import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.*;
@@ -11,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 //@WebFilter(filterName = "LoginCheckFilter",urlPatterns = "/*")
+@Slf4j
 public class LoginCheckFilter implements Filter {
 
     //路径匹配器，支持通配符
@@ -40,7 +45,6 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(servletRequest,servletResponse);
             return;
         }
-
         //判断是否登录
         if (request.getSession().getAttribute("employee") == null){
             servletResponse.setCharacterEncoding("UTF-8");
@@ -50,6 +54,14 @@ public class LoginCheckFilter implements Filter {
             res.put("msg", "未登录");
             res.put("success", "false");
             out.append(res.toString());
+//            log.info("用户已登录，用户id为：{}", request.getSession().getAttribute("employee"));
+
+            Long empId= (Long) request.getSession().getAttribute("employee");
+
+            BaseContext.setCurrentId(empId);
+
+            filterChain.doFilter(request, response);
+            return;
         }else {
             filterChain.doFilter(servletRequest,servletResponse);
         }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.buba.pojo.Employee;
 import com.buba.utils.R;
 import com.buba.service.impl.EmployeeServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
@@ -18,12 +19,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/employee")
+@Slf4j
 public class EmployeeController {
 
     @Autowired
     private EmployeeServiceImpl employeeService;
-
-    private Logger log = Logger.getLogger(EmployeeController.class);
 
     //登录
     @PostMapping ("/login")
@@ -68,28 +68,15 @@ public class EmployeeController {
         //加密密码
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
 
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-
         //获取登录者id
         Long empId = (Long) request.getSession().getAttribute("employee");
         employee.setCreateUser(1l);
         employee.setUpdateUser(1l);
-
-        //设置id
-
-        employee.setId(1l);
-        UUID uuid = UUID.randomUUID();
-        long mostSigBits = uuid.getMostSignificantBits();
-        long leastSigBits = uuid.getLeastSignificantBits();
-        System.out.println(mostSigBits ^ leastSigBits);
-        employee.setId(mostSigBits ^ leastSigBits);
         try {
             employeeService.save(employee);
             return R.success("添加成功");
         } catch (Exception e) {
             System.out.println(e);
-            log.error(e);
             return R.error("添加失败，");
         }
     }
@@ -112,5 +99,27 @@ public class EmployeeController {
         employeeService.page(pageInfo,queryWrapper);
 
         return R.success(pageInfo);
+    }
+
+    //修改员工
+    @PutMapping
+    public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
+        //获取登录者id
+        Long empId = (Long) request.getSession().getAttribute("employee");
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(empId);
+        employeeService.updateById(employee);
+
+        return R.success("员工信息修改成功");
+    }
+
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable String id){
+        log.info("根据id查询");
+        Employee employee = employeeService.getById(id);
+        if (employee != null){
+            return R.success(employee);
+        }
+        return R.error("没有查询到该用户信息");
     }
 }
