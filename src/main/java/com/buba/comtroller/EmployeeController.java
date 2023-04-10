@@ -2,12 +2,14 @@ package com.buba.comtroller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.buba.pojo.Employee;
 import com.buba.utils.R;
 import com.buba.service.impl.EmployeeServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,7 +92,25 @@ public class EmployeeController {
             log.error(e);
             return R.error("添加失败，");
         }
+    }
 
+    //分页查询
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name) {
 
+        //构造分页构造器
+        Page pageInfo=new Page(page,pageSize);
+
+        //构造条件构造器
+        LambdaQueryWrapper<Employee> queryWrapper=new LambdaQueryWrapper();
+        //添加过滤条件
+        queryWrapper.like(!StringUtils.isEmpty(name),Employee::getName,name);
+        //添加排序条件
+        queryWrapper.orderByDesc(Employee::getUpdateTime);
+
+        //执行查询
+        employeeService.page(pageInfo,queryWrapper);
+
+        return R.success(pageInfo);
     }
 }
