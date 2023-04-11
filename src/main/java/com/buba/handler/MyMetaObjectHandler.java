@@ -1,6 +1,7 @@
 package com.buba.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.buba.utils.BaseContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
@@ -20,8 +21,8 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         log.info(metaObject.toString());
         metaObject.setValue("createTime", LocalDateTime.now());
         metaObject.setValue("updateTime", LocalDateTime.now());
-        metaObject.setValue("createUser",new Long(1));
-        metaObject.setValue("updateUser",new Long(1));
+        metaObject.setValue("createUser", BaseContext.getCurrentId());
+        metaObject.setValue("updateUser",BaseContext.getCurrentId());
     }
     //更新时自动填充
     @Override
@@ -29,6 +30,6 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         log.info("公共字段自动填充【update】。。。");
         log.info(metaObject.toString());
         metaObject.setValue("updateTime",LocalDateTime.now());
-        metaObject.setValue("updateUser",new Long(1));
+        metaObject.setValue("updateUser",BaseContext.getCurrentId());
     }
 }

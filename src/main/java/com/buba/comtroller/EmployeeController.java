@@ -54,7 +54,7 @@ public class EmployeeController {
         }
 
         //密码正确将用户id存入Session
-        request.setAttribute("employee",emp.getId());
+        request.getSession().setAttribute("employee",emp.getId());
         return R.success(emp);
     }
 
@@ -76,8 +76,6 @@ public class EmployeeController {
 
         //获取登录者id
         Long empId = (Long) request.getSession().getAttribute("employee");
-        employee.setCreateUser(1l);
-        employee.setUpdateUser(1l);
         try {
             employeeService.save(employee);
             return R.success("添加成功");

@@ -54,7 +54,9 @@ public class LoginCheckFilter implements Filter {
             res.put("msg", "未登录");
             res.put("success", "false");
             out.append(res.toString());
-//            log.info("用户已登录，用户id为：{}", request.getSession().getAttribute("employee"));
+            return;
+        }else {
+            log.info("用户已登录，用户id为：{}", request.getSession().getAttribute("employee"));
 
             Long empId= (Long) request.getSession().getAttribute("employee");
 
@@ -62,8 +64,6 @@ public class LoginCheckFilter implements Filter {
 
             filterChain.doFilter(request, response);
             return;
-        }else {
-            filterChain.doFilter(servletRequest,servletResponse);
         }
 
     }
