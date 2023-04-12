@@ -29,6 +29,7 @@ public class DishController {
     @Autowired
     private CategoryService categoryService;
 
+    //新增菜品
     @PostMapping
     public R<String> save(@RequestBody DishDto dishDto){
         try {
@@ -40,6 +41,7 @@ public class DishController {
         return R.success("新增菜品成功");
     }
 
+    //查询菜品
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name) {
         //构造分页构造器
@@ -81,4 +83,39 @@ public class DishController {
 
         return R.success(dishDtoPage);
     }
+
+    //根据Id查询菜品信息与对应的口味信息
+    @GetMapping("/{id}")
+    public R<DishDto> getById(@PathVariable Long id){
+        DishDto dishDto = dishService.getByIdWithFlavor(id);
+        return R.success(dishDto);
+    }
+
+    //修改菜品
+    @PutMapping
+    public R<String> update(@RequestBody DishDto dishDto){
+        dishService.updateWithFlavor(dishDto);
+        return R.success("修改菜品成功");
+    }
+
+    //停售起售菜品
+    @PostMapping("/status/{status}")
+    public R<String> sale(@PathVariable int status,
+                          String[] ids){
+        for(String id: ids){
+            Dish dish = dishService.getById(id);
+            dish.setStatus(status);
+            dishService.updateById(dish);
+        }
+        return R.success("修改成功");
+    }
+    //删除菜品
+    @DeleteMapping
+    public R<String> delete(String[] ids){
+        for (String id:ids) {
+            dishService.removeById(id);
+        }
+        return R.success("删除成功");
+    }
+
 }

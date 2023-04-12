@@ -6,4 +6,10 @@ import com.buba.pojo.dot.DishDto;
 
 public interface DishService extends IService<Dish> {
     public void saveWithFlavor(DishDto dishDto);
+
+    DishDto getByIdWithFlavor(Long id);
+
+    void updateWithFlavor(DishDto dishDto);
+
+    boolean removeById(String id);
 }
