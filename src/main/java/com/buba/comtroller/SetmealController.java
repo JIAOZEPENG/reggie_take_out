@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.buba.pojo.Category;
 import com.buba.pojo.Setmeal;
+import com.buba.pojo.SetmealDish;
 import com.buba.pojo.dto.SetmealDto;
 import com.buba.service.CategoryService;
 import com.buba.service.SetmealDishService;
@@ -89,7 +90,10 @@ public class SetmealController {
         for(String id:ids) {
             Setmeal setmeal = setmealService.getById(id);
             if(setmeal.getStatus()!=1){
+                LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.eq(SetmealDish::getSetmealId,id);
                 setmealService.removeById(id);
+                setmealDishService.remove(queryWrapper);
             }else {
                 index++;
             }
