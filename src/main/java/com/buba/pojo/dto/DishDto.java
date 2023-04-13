@@ -1,4 +1,4 @@
-package com.buba.pojo.dot;
+package com.buba.pojo.dto;
 
 import com.buba.pojo.Dish;
 import com.buba.pojo.DishFlavor;

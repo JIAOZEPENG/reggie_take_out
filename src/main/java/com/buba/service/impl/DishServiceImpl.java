@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.buba.mapper.DishMapper;
 import com.buba.pojo.Dish;
 import com.buba.pojo.DishFlavor;
-import com.buba.pojo.dot.DishDto;
+import com.buba.pojo.dto.DishDto;
 import com.buba.service.DishFlavorService;
 import com.buba.service.DishService;
 import org.springframework.beans.BeanUtils;

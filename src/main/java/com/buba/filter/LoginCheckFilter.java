@@ -1,8 +1,10 @@
 package com.buba.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.buba.comtroller.EmployeeController;
 import com.buba.utils.BaseContext;
+import com.buba.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.springframework.util.AntPathMatcher;
@@ -34,7 +36,9 @@ public class LoginCheckFilter implements Filter {
         //要放行的请求
         String[] url = new String[]{
                 "/employee/login",
-                "/employee/logout"
+                "/employee/logout",
+                "/backend/**",
+                "/front/**"
         };
 
         //获取本次请求的路径
@@ -53,6 +57,7 @@ public class LoginCheckFilter implements Filter {
             JSONObject res = new JSONObject();
             res.put("msg", "未登录");
             res.put("success", "false");
+            response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
             out.append(res.toString());
             return;
         }else {

@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.buba.pojo.Category;
 import com.buba.pojo.Dish;
-import com.buba.pojo.dot.DishDto;
+import com.buba.pojo.DishFlavor;
+import com.buba.pojo.dto.DishDto;
 import com.buba.service.CategoryService;
 import com.buba.service.DishFlavorService;
 import com.buba.service.DishService;
@@ -67,9 +68,15 @@ public class DishController {
         List<Dish> records = pageInfo.getRecords();
         List<DishDto> list=records.stream().map((item)->{
             DishDto dishDto=new DishDto();
-
             BeanUtils.copyProperties(item,dishDto);
             Long categoryId = item.getCategoryId();
+
+            //查询口味
+            LambdaQueryWrapper<DishFlavor> dishFlavorQueryWrapper = new LambdaQueryWrapper<>();
+            dishFlavorQueryWrapper.eq(DishFlavor::getDishId,item.getId());
+            List<DishFlavor> list1 = dishFlavorService.list(dishFlavorQueryWrapper);
+            dishDto.setFlavors(list1);
+
             //根据id查分类对象
             Category category = categoryService.getById(categoryId);
             if(category!=null){
@@ -117,5 +124,26 @@ public class DishController {
         }
         return R.success("删除成功");
     }
+
+
+    //查询菜系中的菜品
+    @GetMapping("/list")
+    public R<List<Dish>> list(Dish dish){
+
+        //构造查询条件
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper=new LambdaQueryWrapper<>();
+        //添加条件，查询状态为1的（起售状态）
+        lambdaQueryWrapper.eq(Dish::getStatus,1);
+        lambdaQueryWrapper.eq(dish.getCategoryId()!=null,Dish::getCategoryId,dish.getCategoryId());
+        //条件排序条件
+        lambdaQueryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+
+        List<Dish> list=dishService.list(lambdaQueryWrapper);
+
+        return R.success(list);
+    }
+
+
+
 
 }

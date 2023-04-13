@@ -27,7 +27,7 @@ public class EmployeeController {
 
     //登录
     @PostMapping ("/login")
-    public R<Employee> login(HttpServletRequest request,Employee employee){
+    public R<Employee> login(HttpServletRequest request,@RequestBody Employee employee){
 
         //1、将页面提交的密码进行md5加密处理
         String password = employee.getPassword();
