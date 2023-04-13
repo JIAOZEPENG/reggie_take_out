@@ -42,8 +42,8 @@ public class UserController {
             //生成随机的4位验证码
             String code = ValidateCodeUtils.generateCode().toString();
             log.info("code={}",code);
-            //调用阿里云提供的短信服务API完成发送短信
-            sendMessage("瑞吉外卖","验证码", email,code);
+            //完成发送短信
+//            sendMessage("瑞吉外卖","验证码", email,code);
 
             //需要将生成的验证码保存到Session
             session.setAttribute(email,code);
@@ -54,6 +54,7 @@ public class UserController {
 
 
 
+    //登录
     @PostMapping("/login")
     public R<User> login(@RequestBody Map map, HttpSession session) {
         log.info("map:{}", map.toString());

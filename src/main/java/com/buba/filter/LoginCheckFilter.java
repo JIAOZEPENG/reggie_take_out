@@ -51,29 +51,6 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(servletRequest,servletResponse);
             return;
         }
-        //判断是否登录
-        if (request.getSession().getAttribute("employee") == null){
-            servletResponse.setCharacterEncoding("UTF-8");
-            servletResponse.setContentType("application/json; charset=utf-8");
-            PrintWriter out = servletResponse.getWriter();
-            JSONObject res = new JSONObject();
-            res.put("msg", "未登录");
-            res.put("success", "false");
-            response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
-            out.append(res.toString());
-            return;
-        }
-        if (request.getSession().getAttribute("employee") != null){
-            log.info("用户已登录，用户id为：{}", request.getSession().getAttribute("employee"));
-
-            Long empId= (Long) request.getSession().getAttribute("employee");
-
-            BaseContext.setCurrentId(empId);
-
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         //        4-2、判断登录状态，如果已登录，则直接放行
         if (request.getSession().getAttribute("user") != null) {
             log.info("用户已登录，用户id为：{}", request.getSession().getAttribute("user"));
@@ -85,7 +62,26 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(request, response);
             return;
         }
+        //判断是否登录
+        if (request.getSession().getAttribute("employee") != null){
+            log.info("用户已登录，用户id为：{}", request.getSession().getAttribute("employee"));
 
+            Long empId= (Long) request.getSession().getAttribute("employee");
+
+            BaseContext.setCurrentId(empId);
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+        servletResponse.setCharacterEncoding("UTF-8");
+        servletResponse.setContentType("application/json; charset=utf-8");
+        PrintWriter out = servletResponse.getWriter();
+        JSONObject res = new JSONObject();
+        res.put("msg", "未登录");
+        res.put("success", "false");
+        response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
+        out.append(res.toString());
+        return;
     }
 
     @Override
