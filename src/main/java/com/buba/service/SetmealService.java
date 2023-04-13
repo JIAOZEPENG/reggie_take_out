@@ -6,4 +6,8 @@ import com.buba.pojo.dto.SetmealDto;
 
 public interface SetmealService extends IService<Setmeal> {
     public void saveWithDish(SetmealDto setmealDto);
+
+    SetmealDto getByIdWithDish(Long id);
+
+    void updateWithDish(SetmealDto setmealDto);
 }
