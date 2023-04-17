@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.Map;
@@ -79,12 +80,18 @@ public class UserController {
                 userService.save(user);
             }
             session.setAttribute("user",user.getId());
-            return R.success(user);
+            return R.success(user).add("success","登录成功");
         }
         return R.error("登陆失败");
     }
 
-
+    //用户登出
+    @PostMapping("/loginout")
+    public R<String> loginout(HttpServletRequest request){
+        //清理Session中保存的当前用户登录的id
+        request.getSession().removeAttribute("user");
+        return R.success("退出成功");
+    }
 
     /**
      * 发送短信

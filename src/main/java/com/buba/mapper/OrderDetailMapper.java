@@ -1,10 +1,10 @@
 package com.buba.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.buba.pojo.ShoppingCart;
+import com.buba.pojo.OrderDetail;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface ShoppingCartMapper extends BaseMapper<ShoppingCart> {
+public interface OrderDetailMapper extends BaseMapper<OrderDetail> {
 
 }
